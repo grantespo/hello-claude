@@ -5,6 +5,10 @@ import { z } from 'zod';
 const client = new Anthropic();
 const API_KEY = process.env.OPENWEATHER_API_KEY;
 
+const geoRes = await fetch('http://ip-api.com/json/');
+const geo = await geoRes.json();
+const location = `${geo.city}, ${geo.regionName}`;
+
 const getWeather = betaZodTool({
   name: 'get_weather',
   description: 'Get current weather for a city',
@@ -28,7 +32,7 @@ const finalMessage = await client.beta.messages.toolRunner({
   tools: [getWeather],
   messages: [{
     role: 'user',
-    content: 'Help me plan a fun day in Boynton Beach, FL based on the current weather. Check the weather first, then suggest activities.',
+    content: `Help me plan a fun day in ${location} based on the current weather. Check the weather first, then suggest activities.`,
   }],
 });
 
